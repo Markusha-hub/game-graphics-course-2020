@@ -13,8 +13,9 @@
 import PicoGL from "../node_modules/picogl/build/module/picogl.js";
 import {mat4, vec3} from "../node_modules/gl-matrix/esm/index.js";
 
-import {positions, normals, uvs, indices} from "../blender/cube.js"
+import {positions, normals, uvs, indices} from "../blender/sphere.js"
 
+//SKYBOX IS A BOX LAYERED WITH TEXTURE TO MAKE IT LOOK LIKE AN ENVIRONMENT
 const skyboxPositions = new Float32Array([
     -1.0, 1.0, 1.0,
     1.0, 1.0, 1.0,
@@ -124,18 +125,20 @@ async function loadTexture(fileName) {
     return await createImageBitmap(await (await fetch("images/" + fileName)).blob());
 }
 
+//Draw calls = how many objects are being drawn to the screen. You want to keep this number down to maintain good performance.
+
 (async () => {
-    const tex = await loadTexture("abstract.jpg");
+    const tex = await loadTexture("abstract1.jpg");
     let drawCall = app.createDrawCall(program, vertexArray)
         .texture("tex", app.createTexture2D(tex, tex.width, tex.height, {
             magFilter: PicoGL.LINEAR,
             minFilter: PicoGL.LINEAR_MIPMAP_LINEAR,
             maxAnisotropy: 10,
-            wrapS: PicoGL.REPEAT,
-            wrapT: PicoGL.REPEAT
+            wrapT: PicoGL.REPEAT,
+            wrapV: PicoGL.REPEAT
         }));
 
-    let skyboxDrawCall = app.createDrawCall(skyboxProgram, skyboxArray)
+        let skyboxDrawCall = app.createDrawCall(skyboxProgram, skyboxArray)
         .texture("cubemap", app.createCubemap({
             negX: await loadTexture("stormydays_bk.png"),
             posX: await loadTexture("stormydays_ft.png"),
@@ -152,7 +155,7 @@ async function loadTexture(fileName) {
         let time = new Date().getTime() / 1000 - startTime;
 
         mat4.perspective(projMatrix, Math.PI / 2, app.width / app.height, 0.1, 100.0);
-        let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(0, 0.5, 2), vec3.fromValues(0, 0, 0), time * 0.05);
+        let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(0, 1.5, 2), vec3.fromValues(2, 1, 3), time * 0.5);
         mat4.lookAt(viewMatrix, camPos, vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
         mat4.multiply(viewProjMatrix, projMatrix, viewMatrix);
 

@@ -138,7 +138,7 @@ async function loadTexture(fileName) {
 }
 
 (async () => {
-    let bgColor = vec4.fromValues(0.1, 0.1, 0.1, 1.0);
+    let bgColor = vec4.fromValues(0.1, 0.1, 0.5, 1.0);
     app.clearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
 
     let program = app.createProgram(vertexShader.trim(), fragmentShader.trim());
